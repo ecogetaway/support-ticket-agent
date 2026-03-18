@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from google.adk.runners import Runner
@@ -35,6 +36,15 @@ app = FastAPI(
     description="An AI agent that classifies and routes customer support tickets using Google ADK + Gemini.",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+# ── CORS ───────────────────────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ── Request / Response schemas ─────────────────────────────────────────────────
@@ -147,7 +157,7 @@ async def classify_ticket(request: TicketRequest):
 async def classify_batch(tickets: list[TicketRequest]):
     if len(tickets) > 10:
         raise HTTPException(status_code=400, detail="Max 10 tickets per batch request.")
-    
+
     results = []
     for req in tickets:
         try:
@@ -158,7 +168,7 @@ async def classify_batch(tickets: list[TicketRequest]):
             results.append({"status": "success", "data": result})
         except Exception as e:
             results.append({"status": "error", "ticket": req.ticket, "error": str(e)})
-    
+
     return {"results": results, "total": len(results)}
 
 
