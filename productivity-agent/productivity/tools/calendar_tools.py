@@ -62,8 +62,8 @@ def upcoming_events(days: int = 7) -> dict:
     Returns:
         Dictionary with an 'events' list and 'count'.
     """
-    from datetime import datetime, timedelta
-    now = datetime.utcnow()
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
     date_from = now.strftime("%Y-%m-%d")
     date_to = (now + timedelta(days=days)).strftime("%Y-%m-%d")
     return list_events(date_from=date_from, date_to=date_to)

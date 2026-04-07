@@ -4,7 +4,7 @@ import uuid
 import asyncio
 import logging
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -41,8 +41,8 @@ def seed_demo_data() -> None:
         if cur.fetchone()[0] > 0:
             return  # already seeded
 
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    tomorrow = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    tomorrow = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%d")
 
     create_task("Review Q1 Report", priority="High", due_date=tomorrow, description="Go through the quarterly metrics deck")
     create_task("Send project update email", priority="Medium", due_date=today)
@@ -126,9 +126,9 @@ def _parse_and_execute_directly(message: str) -> str:
         if date_match:
             due = date_match.group()
         elif "tomorrow" in msg:
-            due = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
+            due = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%d")
         elif "today" in msg:
-            due = datetime.utcnow().strftime("%Y-%m-%d")
+            due = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
         priority = "Medium"
         if any(k in msg for k in ["urgent", "critical", "asap"]):
@@ -155,11 +155,11 @@ def _parse_and_execute_directly(message: str) -> str:
             if time_match:
                 start_time += f" {time_match.group()}"
         elif "tomorrow" in msg:
-            start_time = (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d")
+            start_time = (datetime.now(timezone.utc) + timedelta(days=1)).strftime("%Y-%m-%d")
             if time_match:
                 start_time += f" {time_match.group()}"
         else:
-            start_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            start_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
 
         title = re.sub(r"(please |can you |schedule |create |a |meeting |event |for |at |on )", "", message, flags=re.IGNORECASE).strip()
         title = title[:80] if title else "New event"
@@ -225,7 +225,7 @@ async def run_orchestrator(message: str, session_id: str):
 
     runner = Runner(agent=orchestrator, app_name=APP_NAME, session_service=session_service)
 
-    today = datetime.utcnow().strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     enriched_message = f"[Today's date: {today}]\n\n{message}"
     user_message = genai_types.Content(role="user", parts=[genai_types.Part(text=enriched_message)])
 

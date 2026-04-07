@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from contextlib import contextmanager
 
 DB_PATH = os.environ.get("PRODUCTIVITY_DB_PATH", "/tmp/productivity.db")
@@ -71,4 +71,4 @@ def rows_to_list(rows) -> list[dict]:
 
 
 def now_iso() -> str:
-    return datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
