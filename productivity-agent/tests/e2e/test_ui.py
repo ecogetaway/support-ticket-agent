@@ -122,9 +122,11 @@ def test_cmd_enter_shortcut_works(app_page: Page):
 @live
 def test_chat_user_bubble_appears(app_page: Page):
     """User message bubble renders immediately after sending."""
-    app_page.locator("#message-input").fill("Hello, show me my tasks")
+    app_page.locator("#message-input").fill("Hello, what can you help me with?")
     app_page.locator("#send-btn").click()
-    expect(app_page.get_by_text("Hello, show me my tasks")).to_be_visible(timeout=5000)
+    expect(
+        app_page.locator("#chat-messages").get_by_text("Hello, what can you help me with?")
+    ).to_be_visible(timeout=5000)
 
 
 @live

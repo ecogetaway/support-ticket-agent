@@ -36,11 +36,15 @@ def test_client(temp_db):
 
 @pytest.fixture(autouse=True)
 def reset_db_between_tests(temp_db):
-    """Wipe all rows between tests so each test starts with a clean slate."""
+    """Wipe all rows between tests so each test starts with a clean slate.
+    Skips gracefully for E2E tests which run against the live server's own DB."""
     yield
-    from productivity.db.database import db_cursor
-    with db_cursor() as cur:
-        cur.execute("DELETE FROM tasks")
-        cur.execute("DELETE FROM events")
-        cur.execute("DELETE FROM notes")
-        cur.execute("DELETE FROM sqlite_sequence WHERE name IN ('tasks','events','notes')")
+    try:
+        from productivity.db.database import db_cursor
+        with db_cursor() as cur:
+            cur.execute("DELETE FROM tasks")
+            cur.execute("DELETE FROM events")
+            cur.execute("DELETE FROM notes")
+            cur.execute("DELETE FROM sqlite_sequence WHERE name IN ('tasks','events','notes')")
+    except Exception:
+        pass  # E2E tests hit the live server — no local DB to reset
