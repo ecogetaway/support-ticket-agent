@@ -24,4 +24,4 @@ ENV PRODUCTIVITY_DB_PATH=/tmp/productivity.db
 
 EXPOSE 8081
 
-CMD ["sh", "-c", "uvicorn productivity_main:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT}"]

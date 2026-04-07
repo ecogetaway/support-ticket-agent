@@ -128,7 +128,7 @@ async def run_orchestrator(message: str, session_id: str) -> str:
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def serve_frontend():
-    frontend_path = Path(__file__).parent / "productivity_frontend.html"
+    frontend_path = Path(__file__).parent / "frontend.html"
     if frontend_path.exists():
         return HTMLResponse(content=frontend_path.read_text())
     return HTMLResponse(content="<h1>Productivity Agent API</h1><p>Visit <a href='/docs'>/docs</a></p>")
@@ -211,4 +211,4 @@ async def get_notes(tag: str = "", search: str = ""):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8081))
-    uvicorn.run("productivity_main:app", host="0.0.0.0", port=port, reload=False)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

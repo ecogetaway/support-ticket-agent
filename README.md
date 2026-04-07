@@ -39,28 +39,30 @@ All agents are backed by **SQLite** for persistent structured data storage and e
 
 ```
 support-agent/
-├── agent/                          # Project 1 — ticket classifier
+├── agent/                              # Project 1 — ticket classifier agent
 │   ├── __init__.py
 │   └── agent.py
-├── productivity/                   # Project 2 — multi-agent assistant
-│   ├── agents/
-│   │   ├── orchestrator.py         # Primary coordinator (sub_agents=[...])
-│   │   ├── task_agent.py           # Task sub-agent + FunctionTools
-│   │   ├── calendar_agent.py       # Calendar sub-agent + FunctionTools
-│   │   └── notes_agent.py          # Notes sub-agent + FunctionTools
-│   ├── tools/
-│   │   ├── task_tools.py           # Task CRUD functions
-│   │   ├── calendar_tools.py       # Calendar CRUD functions
-│   │   └── notes_tools.py          # Notes CRUD functions
-│   ├── db/
-│   │   └── database.py             # SQLite setup (tasks, events, notes)
-│   └── mcp_server.py               # MCP tool server (stdio)
-├── main.py                         # Project 1 FastAPI server (port 8080)
-├── productivity_main.py            # Project 2 FastAPI server (port 8081)
-├── index.html                      # Project 1 frontend
-├── productivity_frontend.html      # Project 2 chat frontend
-├── Dockerfile                      # Project 1 container
-├── Dockerfile.productivity         # Project 2 container
+├── productivity-agent/                 # Project 2 — multi-agent productivity assistant
+│   ├── productivity/
+│   │   ├── agents/
+│   │   │   ├── orchestrator.py         # Primary coordinator (sub_agents=[...])
+│   │   │   ├── task_agent.py           # Task sub-agent + FunctionTools
+│   │   │   ├── calendar_agent.py       # Calendar sub-agent + FunctionTools
+│   │   │   └── notes_agent.py          # Notes sub-agent + FunctionTools
+│   │   ├── tools/
+│   │   │   ├── task_tools.py           # Task CRUD functions
+│   │   │   ├── calendar_tools.py       # Calendar CRUD functions
+│   │   │   └── notes_tools.py          # Notes CRUD functions
+│   │   ├── db/
+│   │   │   └── database.py             # SQLite setup (tasks, events, notes)
+│   │   └── mcp_server.py               # MCP tool server (stdio)
+│   ├── main.py                         # FastAPI server (port 8081)
+│   ├── frontend.html                   # Chat UI
+│   ├── Dockerfile
+│   └── requirements.txt
+├── main.py                             # Project 1 FastAPI server (port 8080)
+├── index.html                          # Project 1 frontend
+├── Dockerfile                          # Project 1 container
 ├── requirements.txt
 └── .env.example
 ```
@@ -235,7 +237,8 @@ curl -X POST $SERVICE_URL/classify \
 ### Run locally
 
 ```bash
-uvicorn productivity_main:app --reload --port 8081
+cd productivity-agent
+uvicorn main:app --reload --port 8081
 ```
 
 Visit: http://localhost:8081 for the chat UI, http://localhost:8081/docs for Swagger.
